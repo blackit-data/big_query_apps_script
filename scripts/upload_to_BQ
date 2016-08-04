@@ -1,0 +1,117 @@
+function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
+  
+  var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  var projectId = 'somoto-installer';
+  var datasetId = 'temp';
+  var tableId = 'pets_';
+  
+  var overwrite = 0
+  
+  if (overwrite == 1 || overwrite =='yes') {
+    
+  try{
+  BigQuery.Tables.remove(projectId, datasetId, tableId)
+  }catch( e){
+    
+  }
+  }
+  
+  
+  
+  
+  var lRow = Qsheet.getLastRow()
+  var lCol = Qsheet.getLastColumn()
+  
+  var range = Qsheet.getRange(1, 1, lRow, lCol)
+  
+  
+   var data = range.getValues();
+   var csvFile = undefined;
+  
+      
+        if (data.length > 1) {
+      var csv = "";
+      for (var row = 0; row < data.length; row++) {
+        for (var col = 0; col < data[row].length; col++) {
+          if (data[row][col].toString().indexOf(",") != -1) {
+            data[row][col] = "\"" + data[row][col] + "\"";
+          }
+        }
+
+        // join each row's columns
+        // add a carriage return to end of each row, except for the last one
+        if (row < data.length-1) {
+          csv += data[row].join(",") + "\r\n";
+        }
+        else {
+          csv += data[row];
+        }
+      }
+      csvFile = csv;
+    }
+  
+   //   return csvFile;
+  
+  //var folder = DriveApp.getFolderById('0B2KgNDYvFULTN3otX2tYSFN1c3M')
+  
+  var csv_name = 'temp_' + new Date().getTime()+'.csv'
+  
+  DriveApp.createFile(csv_name, csvFile)
+  
+  
+   var files = DriveApp.getFilesByName(csv_name);
+ while (files.hasNext()) {
+   var file = files.next();
+//   if (new Date() - file.getLastUpdated() < 1 * 24 * 60 * 60 * 1000) {
+    
+
+  
+  
+
+   var table = {
+    tableReference: {
+      projectId: projectId,
+      datasetId: datasetId,
+      tableId: tableId
+    },
+    schema: {
+      fields: [
+        {name: 'week', type: 'STRING'},
+        {name: 'cat', type: 'INTEGER'},
+        {name: 'dog', type: 'INTEGER'},
+        {name: 'bird', type: 'INTEGER'}
+      ]
+    }
+  };
+
+   try {
+     table = BigQuery.Tables.insert(table, projectId, datasetId)}
+   catch(e) {
+   }
+  
+  
+   var data = file.getBlob().setContentType('application/octet-stream');
+
+  // Create the data upload job.
+  var job = {
+    configuration: {
+      load: {
+        destinationTable: {
+          projectId: projectId,
+          datasetId: datasetId,
+          tableId: tableId
+        },
+        skipLeadingRows: 1
+      }
+    }
+  };
+  job = BigQuery.Jobs.insert(job, projectId, data);
+     
+     file.setTrashed(true);
+//}
+
+   
+   
+      }
+ }
+  
