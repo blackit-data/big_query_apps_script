@@ -1,12 +1,17 @@
-function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
+
+
+function uploadBQ_sheet(range,projectId,datasetId,tableId,overwrite ) {
   
-  var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  
+  /* example values
+  var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('upload to BQ');
   var projectId = 'somoto-installer';
-  var datasetId = 'temp';
-  var tableId = 'pets_';
+  var datasetId = 'analytics';
+  var tableId = 'bc_late';
   
-  var overwrite = 0
-  
+  var overwrite = 1
+  */
+
   if (overwrite == 1 || overwrite =='yes') {
     
   try{
@@ -16,15 +21,7 @@ function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
   }
   }
   
-  
-  
-  
-  var lRow = Qsheet.getLastRow()
-  var lCol = Qsheet.getLastColumn()
-  
-  var range = Qsheet.getRange(1, 1, lRow, lCol)
-  
-  
+ 
    var data = range.getValues();
    var csvFile = undefined;
   
@@ -52,8 +49,6 @@ function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
   
    //   return csvFile;
   
-  //var folder = DriveApp.getFolderById('0B2KgNDYvFULTN3otX2tYSFN1c3M')
-  
   var csv_name = 'temp_' + new Date().getTime()+'.csv'
   
   DriveApp.createFile(csv_name, csvFile)
@@ -62,11 +57,6 @@ function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
    var files = DriveApp.getFilesByName(csv_name);
  while (files.hasNext()) {
    var file = files.next();
-//   if (new Date() - file.getLastUpdated() < 1 * 24 * 60 * 60 * 1000) {
-    
-
-  
-  
 
    var table = {
     tableReference: {
@@ -76,10 +66,9 @@ function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
     },
     schema: {
       fields: [
-        {name: 'week', type: 'STRING'},
-        {name: 'cat', type: 'INTEGER'},
-        {name: 'dog', type: 'INTEGER'},
-        {name: 'bird', type: 'INTEGER'}
+        {name: 'timestamp', type: 'TIMESTAMP'},
+        {name: 'installs', type: 'INTEGER'},
+        {name: 'downloads', type: 'INTEGER'}
       ]
     }
   };
@@ -108,10 +97,7 @@ function uploadBQ_sheet(sheet_name,projectId,datasetId,tableId,overwrite ) {
   job = BigQuery.Jobs.insert(job, projectId, data);
      
      file.setTrashed(true);
-//}
 
-   
    
       }
  }
-  
