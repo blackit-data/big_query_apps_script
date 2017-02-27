@@ -1,3 +1,14 @@
+function update_analytics() {
+  
+  var pSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Report Configuration')
+  
+  var reportRange = pSheet.getRange('b2:c15')
+  
+  general(reportRange)
+}
+
+
+
 function analytics_export(reportRange) {
 
 // Input is a range (not values) identical to the structure of the add-on inputs
