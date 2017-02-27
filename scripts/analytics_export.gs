@@ -2,9 +2,18 @@ function update_analytics() {
   
   var pSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Report Configuration')
   
-  var reportRange = pSheet.getRange('b2:c15')
+  var last_col = pSheet.getLastColumn()
   
-  general(reportRange)
+  var reportRange = pSheet.getRange(2, 2, 15, last_col-1) // take all reports
+  
+  // 2 tries
+  try {
+  analytics_export(reportRange)
+  } catch(err) {
+    Utilities.sleep(1000)
+        analytics_export(reportRange)
+  }
+  
 }
 
 
@@ -18,6 +27,8 @@ function analytics_export(reportRange) {
 //  var reportRange = sheet.getRange('b2:c15')
 //  analytics_export(reportRange)
 // No Spreadsheet URL input taken into account
+  
+// NOTE: Metrics need to be separated by comma and not by space/tab
   
   var input = reportRange.getValues()
   var rows = reportRange.getNumRows()
