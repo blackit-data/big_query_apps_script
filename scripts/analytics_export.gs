@@ -88,7 +88,7 @@ function analytics_export(reportRange) {
     sheet.appendRow(headers);
 
     // Append the results.
-    sheet.getRange(2, 1, report.rows.length, headers.length)
+    sheet.getRange(16, 1, report.rows.length, headers.length)
         .setValues(report.rows);
 
    /* Logger.log('Report spreadsheet created: %s',
