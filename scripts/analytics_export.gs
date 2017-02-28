@@ -6,19 +6,21 @@ function update_analytics() {
   
   var reportRange = pSheet.getRange(2, 2, 15, last_col-1) // take all reports
   
+  var output_first_row = 16
+  
   // 2 tries
   try {
-  analytics_export(reportRange)
+  analytics_export(reportRange,output_first_row)
   } catch(err) {
     Utilities.sleep(1000)
-        analytics_export(reportRange)
+        analytics_export(reportRange,output_first_row)
   }
   
 }
 
 
 
-function analytics_export(reportRange) {
+function analytics_export(reportRange,output_first_row) {
 
 // Input is a range (not values) identical to the structure of the add-on inputs
 
@@ -88,7 +90,7 @@ function analytics_export(reportRange) {
     sheet.appendRow(headers);
 
     // Append the results.
-    sheet.getRange(16, 1, report.rows.length, headers.length)
+    sheet.getRange(output_first_row, 1, report.rows.length, headers.length)
         .setValues(report.rows);
 
    /* Logger.log('Report spreadsheet created: %s',
