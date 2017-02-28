@@ -42,11 +42,11 @@ function analytics_export(reportRange) {
     var startDate = Utilities.formatDate(input[3][i], 'GMT', "YYYY-MM-dd") 
     var endDate = Utilities.formatDate(input[4][i], 'GMT', "YYYY-MM-dd") 
     
-    var metric = input[6][i];
+    var metric = input[6][i].replace(/(?:\r\n|\r|\n)/g, ',');
    
     // OPTIONS
-    var dimensions = input[7][i]=='' ? null : input[7][i];
-    var sort = input[8][i]=='' ? null : input[8][i];
+    var dimensions = input[7][i]=='' ? null : input[7][i].replace(/(?:\r\n|\r|\n)/g, ',');
+    var sort = input[8][i]=='' ? null : input[8][i].replace(/(?:\r\n|\r|\n)/g, ',');
     var filters = input[9][i]=='' ? null : input[9][i];   
     var segment =input[10][i]=='' ? null : input[10][i];
     var sampling_level =input[11][i]=='' ? 'HIGHER_PRECISION' : input[11][i];
