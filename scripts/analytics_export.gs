@@ -6,7 +6,7 @@ function update_analytics() {
   
   var reportRange = pSheet.getRange(2, 2, 15, last_col-1) // take all reports
   
-  var output_first_row = 16
+  var output_first_row = 15
   
   // 2 tries
   try {
@@ -30,7 +30,12 @@ function analytics_export(reportRange,output_first_row) {
 //  analytics_export(reportRange)
 // No Spreadsheet URL input taken into account
   
-// NOTE: Metrics need to be separated by comma and not by space/tab
+// Merged cells in the output sheet will be unmerged (relevant for sheets created with Add-On)
+// If no output_first_row defined, output printed on the top of the sheet
+  
+     if(typeof output_first_row == "undefined"){
+    output_first_row = 1
+     }
   
   var input = reportRange.getValues()
   var rows = reportRange.getNumRows()
@@ -83,6 +88,14 @@ function analytics_export(reportRange,output_first_row) {
     
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet)
     sheet.clearContents()
+    sheet.clearFormats()
+    
+    // Unmerge rows 1,10,14
+    sheet.getRange(1, 1,1,26).breakApart()
+    sheet.getRange(10, 1,1,26).breakApart()
+    sheet.getRange(14, 1,1,26).breakApart()
+
+    
     // Append the headers.
     var headers = report.columnHeaders.map(function(columnHeader) {
       return columnHeader.name;
@@ -90,7 +103,14 @@ function analytics_export(reportRange,output_first_row) {
     sheet.appendRow(headers);
 
     // Append the results.
-    sheet.getRange(output_first_row, 1, report.rows.length, headers.length)
+    // 1 header
+   var header2paste =  sheet.getRange(1, 1, 1, headers.length).getValues()
+      sheet.getRange(1, 1, 1, headers.length).clear()
+   sheet.getRange(output_first_row, 1, 1, headers.length).setValues(header2paste)
+
+    
+   // 2 data
+    sheet.getRange(output_first_row+1, 1, report.rows.length, headers.length)
         .setValues(report.rows);
 
    /* Logger.log('Report spreadsheet created: %s',
