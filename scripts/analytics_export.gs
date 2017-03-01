@@ -70,10 +70,7 @@ function analytics_export(reportRange,output_first_row) {
     'max-results': max_results
   };
     
-      var report = Analytics.Data.Ga.get(tableId, startDate, endDate, metric,
-      options);
-
-      
+     
   var report = Analytics.Data.Ga.get(tableId, startDate, endDate, metric,
       options);
 
@@ -112,6 +109,9 @@ function analytics_export(reportRange,output_first_row) {
    // 2 data
     sheet.getRange(output_first_row+1, 1, report.rows.length, headers.length)
         .setValues(report.rows);
+    
+   // 3 if date part of the data
+    date_for_GA_export(sheet,header2paste,output_first_row)
 
    /* Logger.log('Report spreadsheet created: %s',
         spreadsheet.getUrl());*/
@@ -122,5 +122,41 @@ function analytics_export(reportRange,output_first_row) {
   }
   
 
+function date_for_GA_export(sheet,headers,output_first_row) {
+  
+  var lastRow = sheet.getLastRow()
+  
+  var num_headers = sheet.getLastColumn();
+  
+       for (var k = 0; k<num_headers; ++k){
+         
+         var trigger = headers[0][k]
+         
+         if(trigger=='ga:date') {
+         
+           var values = sheet.getRange(output_first_row+1, 1,lastRow-output_first_row).getValues()
+           
+           
+             for (var j = 0; j<values.length; ++j){
+             
+                 var to_insert = parse_date(values[j][0].toString());
+             
+                 sheet.getRange(16+j, 1).setValue(to_insert)
+                               
+             } // for j 
+         } // if header
+       } // for k
+
+  
+}
+
+function parse_date(date) {
+    var y = date.substr(0,4),
+        m = date.substr(4,2) - 1,
+        d = date.substr(6,2);
+    var D = new Date(y,m,d);
+    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
+}
+  
   
 }
