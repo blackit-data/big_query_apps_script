@@ -46,8 +46,8 @@ function analytics_export(reportRange,output_first_row) {
     var output_sheet = input[0][i]
     var tableId = input[2][i]
     
-    var startDate = Utilities.formatDate(input[3][i], 'GMT', "YYYY-MM-dd") 
-    var endDate = Utilities.formatDate(input[4][i], 'GMT', "YYYY-MM-dd") 
+    var startDate = Utilities.formatDate(input[3][i], 'IST', "YYYY-MM-dd") 
+    var endDate = Utilities.formatDate(input[4][i], 'IST', "YYYY-MM-dd") 
     
     var metric = input[6][i].replace(/(?:\r\n|\r|\n)/g, ',');
    
@@ -126,6 +126,8 @@ function date_for_GA_export(sheet,headers,output_first_row) {
   
   var lastRow = sheet.getLastRow()
   
+  var date_outut_style = 'EU' //  day,month, year
+  
   var num_headers = sheet.getLastColumn();
   
        for (var k = 0; k<num_headers; ++k){
@@ -139,7 +141,7 @@ function date_for_GA_export(sheet,headers,output_first_row) {
            
              for (var j = 0; j<values.length; ++j){
              
-                 var to_insert = parse_date(values[j][0].toString());
+                 var to_insert = parse_date(values[j][0].toString(),date_outut_style);
              
                  sheet.getRange(16+j, 1).setValue(to_insert)
                                
@@ -150,13 +152,32 @@ function date_for_GA_export(sheet,headers,output_first_row) {
   
 }
 
-function parse_date(date) {
-    var y = date.substr(0,4),
+}
+
+function parse_date(date, style) {
+  
+  // style: US means mm/dd/yyyy; 
+  //        otherwise dd/mm/yyyy
+  
+  /*  var y = date.substr(0,4),
         m = date.substr(4,2) - 1,
         d = date.substr(6,2);
     var D = new Date(y,m,d);
-    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
-}
+    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';*/
   
+     if(typeof style == "undefined"){
+    style = 'EU'
+     } 
+  var year        = date.substring(0,4);
+  var month       = date.substring(4,6);
+  var day         = date.substring(6,8);
+
+  var date_final        = new Date(year, month-1, day,0);
   
-}
+  if (style == 'US'){ 
+        return month + "/" + day + "/" + year;
+  }else{
+      return day + "/" + month + "/" + year;
+  }
+  
+} //parse_date
