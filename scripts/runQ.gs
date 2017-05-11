@@ -1,5 +1,16 @@
-function runQ(sql,projectId,output_sheet) {
-
+function runQ(sql,projectId,output_sheet,add_stats) {
+ 
+  var d0 = new Date();
+  /*
+  // ++++++++++
+  // Test Values
+  var sql = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query').getRange('b2').getValue();
+  var projectId = 'somoto-installer'
+  var output_sheet = 'data'
+  var add_stats = 'yes' // add_stats = 1  -> will add onother hidden Sheet with stats of runs
+  // ++++++++++
+  */
+  
   var request = {
     query: sql
   };
@@ -51,4 +62,48 @@ var jobId = queryResults.jobReference.jobId;
     Browser.msgBox('No data found for your request. Maybe you specified to many parameters.');
   }
   
+     if(typeof add_stats == "undefined"){ 
+       var add_stats = 'yes'
+       } 
+  
+  if (add_stats == 1 || add_stats =='yes') {
+  
+  // Add cost overview
+  var d2 = new Date();
+    var bytes = queryResults.totalBytesProcessed;
+  bytes=+bytes
+      try {
+    var check_range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history').getRange('a1')
+          } 
+      catch(err) {
+    SpreadsheetApp.getActiveSpreadsheet().insertSheet('Query Run history')
+          var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
+          hist_sheet.getRange('a1').setValue('Date');
+          hist_sheet.getRange('b1').setValue('MB Processed');
+          hist_sheet.getRange('c1').setValue('Cost in $');
+          hist_sheet.getRange('d1').setValue('Running time');
+          hist_sheet.getRange('g1').setValue('Total Cost');
+          hist_sheet.getRange('h1').setValue('=sum(c:c)');
+          }
+  
+    var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
+    
+    var last_R = hist_sheet.getLastRow();
+  
+  var now = new Date();
+  
+  var processed_MB = bytes/(1024*1024);
+  var cost = processed_MB/(200*1024)
+  
+  hist_sheet.getRange(last_R+1, 1).setValue(now);
+  hist_sheet.getRange(last_R+1, 2).setValue(processed_MB);
+  hist_sheet.getRange(last_R+1, 3).setValue(cost);  
+   
+  hist_sheet.hideSheet()
+  
+   var d1 = new Date()
+   var how_long = (d1.getTime()-d0.getTime())/1000
+   hist_sheet.getRange(last_R+1, 4).setValue(how_long); 
+//   hist_sheet.getRange(last_R+1, 5).setValue((d1.getTime()-d2.getTime())/1000);
+  }
 }
