@@ -7,7 +7,7 @@ function runQ(sql,projectId,output_sheet,add_stats) {
   var sql = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query').getRange('b2').getValue();
   var projectId = 'somoto-installer'
   var output_sheet = 'data'
-  var add_stats = 'yes' // add_stats = 1  -> will add onother hidden Sheet with stats of runs
+  var add_stats = 'yes' || add_stats = 1  -> will add onother hidden Sheet with stats of runs
   // ++++++++++
   */
   
@@ -78,12 +78,14 @@ var jobId = queryResults.jobReference.jobId;
       catch(err) {
     SpreadsheetApp.getActiveSpreadsheet().insertSheet('Query Run history')
           var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
-          hist_sheet.getRange('a1').setValue('Date');
-          hist_sheet.getRange('b1').setValue('MB Processed');
-          hist_sheet.getRange('c1').setValue('Cost in $');
-          hist_sheet.getRange('d1').setValue('Running time');
+          hist_sheet.hideSheet()
+          
+       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time']];
+        
+       hist_sheet.getRange('a1:e1').setValues(col_names)
+          
           hist_sheet.getRange('g1').setValue('Total Cost');
-          hist_sheet.getRange('h1').setValue('=sum(c:c)');
+          hist_sheet.getRange('h1').setValue('=sum(d:d)');
           }
   
     var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
@@ -99,11 +101,13 @@ var jobId = queryResults.jobReference.jobId;
   hist_sheet.getRange(last_R+1, 2).setValue(processed_MB);
   hist_sheet.getRange(last_R+1, 3).setValue(cost);  
    
-  hist_sheet.hideSheet()
-  
+     
    var d1 = new Date()
-   var how_long = (d1.getTime()-d0.getTime())/1000
-   hist_sheet.getRange(last_R+1, 4).setValue(how_long); 
-//   hist_sheet.getRange(last_R+1, 5).setValue((d1.getTime()-d2.getTime())/1000);
+   var how_long = ((d1.getTime()-d0.getTime())/1000)+0.5
+   
+   var values = [[now,jobId,processed_MB,cost,how_long]]
+   
+   hist_sheet.getRange(last_R+1, 1,1,5).setValues(values); 
+
   }
 }
