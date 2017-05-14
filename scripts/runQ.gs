@@ -105,7 +105,7 @@ var jobId = queryResults.jobReference.jobId;
    var d1 = new Date()
    var how_long = ((d1.getTime()-d0.getTime())/1000)+0.5
    
-   var values = [[now,jobId,processed_MB,cost,how_long]]
+   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long]]
    
    hist_sheet.getRange(last_R+1, 1,1,5).setValues(values); 
 
