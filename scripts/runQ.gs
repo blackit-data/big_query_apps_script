@@ -1,18 +1,26 @@
-function runQ(sql,projectId,output_sheet,add_stats) {
+function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
  
   var d0 = new Date();
-  /*
+ /* 
   // ++++++++++
   // Test Values
   var sql = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query').getRange('b2').getValue();
-  var projectId = 'somoto-installer'
+  var projectId = 'your project'
   var output_sheet = 'data'
-  var add_stats = 'yes' || add_stats = 1  -> will add onother hidden Sheet with stats of runs
+  var add_stats = 1  //-> will add onother hidden Sheet with stats of runs
+  var legacy_sql = false //--> will use legacy by default
   // ++++++++++
   */
   
+    // Check if legacy_sql parameter exists
+     if(typeof legacy_sql == "undefined"){ 
+       var legacy_sql = true
+       } 
+
+  
   var request = {
-    query: sql
+    query: sql,
+    useLegacySql: legacy_sql
   };
 
 var queryResults = BigQuery.Jobs.query(request, projectId);
@@ -35,8 +43,16 @@ var jobId = queryResults.jobReference.jobId;
     rows = rows.concat(queryResults.rows);
   }
 
+  // If no output sheet exists, create one
+  try{
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
     sheet.clear(); 
+  }catch(e){
+    SpreadsheetApp.getActiveSpreadsheet().insertSheet(output_sheet)
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
+    sheet.clear();     
+  }
+  
  if (rows) {
     // Append the headers.
     var headers = queryResults.schema.fields.map(function(field) {
@@ -62,6 +78,7 @@ var jobId = queryResults.jobReference.jobId;
     Browser.msgBox('No data found for your request. Maybe you specified to many parameters.');
   }
   
+  // Check if stats parameter exists
      if(typeof add_stats == "undefined"){ 
        var add_stats = 'yes'
        } 
@@ -111,3 +128,4 @@ var jobId = queryResults.jobReference.jobId;
 
   }
 }
+
