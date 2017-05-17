@@ -1,24 +1,31 @@
 function send_mail() {
   
   // Sheet with email addresses
-  var def_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Definitions');
+  var def_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NAME');
   
   // number of email addresses
-    var numMails = def_sheet.getRange('b4').getValue()
+    var numMails = def_sheet.getRange('RC1').getValue()
   
   // get the list of emails
-  var Mail = def_sheet.getRange(5,1,numMails).getValues()
+  var Mail = def_sheet.getRange(ROW,COL,numMails).getValues()
+  var mail_addresses = Mail[0][0]
+  
+    if (numMails>1){
+      for (var i = 1; i<numMails; ++i){
+        mail_addresses+=','+Mail[i][0]
+      }
+    } 
   
   // Sheet with text to send
-  var minor_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Minor alert');
+  var minor_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Tab with table');
   
   // Trigger (if zero, no emails)
-  var num_notifs = def_sheet.getRange('b1').getValue()
+  var num_notifs = def_sheet.getRange('RC1').getValue()
   
   if (num_notifs>0) {
   
   // define table to send
-  var table_to_send = minor_sheet.getRange("RANGE").getValues()
+  var table_to_send = minor_sheet.getRange("RC1 Range").getValues()
   
   // First row bold (here 6 columns)
   var bodyHTML = '<p><table  border="1" style="width:60%"><tr><td align="center"><b>'+ table_to_send[0][0]	+'</td><td align="center"><b>'+ table_to_send[0][1]+'	</td><td align="center"><b>'+table_to_send[0][2]+'</td><td align="center"><b>'+	table_to_send[0][3]+'</td><td align="center"><b>'+	table_to_send[0][4]+'</td><td align="center"><b>'+	table_to_send[0][5] +'</td></tr>';
@@ -35,15 +42,14 @@ function send_mail() {
  bodyHTML += '</table></p>';
 
 // Sharable link to this file
-  var link = "LINK"
+  var link = "Sharable LINK"
   
   var bodyHTML0 = "TEXT OF MESSAGE. Detailed information you can find  <a href='" + link +"'>here.</a>You can access the file from your COMPANY account only."
   
   var subject = "TEST SUBJECT"
   
-  for (var i = 0; i<numMails; ++i){
-  MailApp.sendEmail({to:Mail[i][0], subject:subject, htmlBody:bodyHTML0+bodyHTML});   
-  }
+  MailApp.sendEmail({to:mail_addresses, subject:subject, htmlBody:bodyHTML0+bodyHTML});   
+  
   
   }
 
