@@ -15,7 +15,11 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
     // Check if legacy_sql parameter exists
      if(typeof legacy_sql == "undefined"){ 
        var legacy_sql = true
-       } 
+         } else if(legacy_sql==0 || legacy_sql == false || legacy_sql == 'standard'){ 
+            var legacy_sql = false
+            } else {
+              var legacy_sql = true
+              }
 
   
   var request = {
@@ -128,4 +132,3 @@ var jobId = queryResults.jobReference.jobId;
 
   }
 }
-
