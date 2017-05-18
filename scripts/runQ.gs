@@ -7,8 +7,8 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
   var sql = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query').getRange('b2').getValue();
   var projectId = 'your project'
   var output_sheet = 'data'
-  var add_stats = 1  //-> will add onother hidden Sheet with stats of runs
-  var legacy_sql = false //--> will use legacy by default
+  var add_stats = 1  //-> by default will add onother hidden Sheet with stats of runs; add_stats=0 saves no stats
+  var legacy_sql = 1 //--> will use legacy by default, if legacy_sql=0 uses standard SQL
   // ++++++++++
   */
   
