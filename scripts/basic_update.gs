@@ -1,14 +1,9 @@
 function update() {
   
-      var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query');
+  var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query');
+    var sql =  Qsheet.getRange('a1').getValue()
+    var projectId = 'bigquery-public-data'
+    var output_sheet = 'data'
   
-  var sql =  Qsheet.getRange('a1').getValue()
-
-  var projectId = 'somoto-installer'
-  var output_sheet = 'data'
-  
-  runQ(sql,projectId,output_sheet) 
-
-
-  
+  runQ(sql,projectId,output_sheet,1,1)   
 }
