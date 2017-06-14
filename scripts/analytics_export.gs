@@ -126,7 +126,7 @@ function date_for_GA_export(sheet,headers,output_first_row) {
   
   var lastRow = sheet.getLastRow()
   
-  var date_outut_style = 'EU' //  day,month, year
+  var date_output_style = 'EU' //  day,month, year
   
   var num_headers = sheet.getLastColumn();
   
@@ -141,7 +141,7 @@ function date_for_GA_export(sheet,headers,output_first_row) {
            
              for (var j = 0; j<values.length; ++j){
              
-                 var to_insert = parse_date(values[j][0].toString(),date_outut_style);
+                 var to_insert = parse_date(values[j][0].toString(),date_output_style);
              
                  sheet.getRange(16+j, 1).setValue(to_insert)
                                
