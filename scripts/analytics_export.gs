@@ -40,6 +40,7 @@ function analytics_export(reportRange,output_first_row) {
   var input = reportRange.getValues()
   var rows = reportRange.getNumRows()
   var columns = reportRange.getNumColumns()
+  var date_style ='US' // month/day/year
   
   for (var i = 0; i<columns; ++i){
   
@@ -111,7 +112,7 @@ function analytics_export(reportRange,output_first_row) {
         .setValues(report.rows);
     
    // 3 if date part of the data
-    date_for_GA_export(sheet,header2paste,output_first_row)
+    date_for_GA_export(sheet,header2paste,output_first_row,date_style)
 
    /* Logger.log('Report spreadsheet created: %s',
         spreadsheet.getUrl());*/
@@ -122,11 +123,13 @@ function analytics_export(reportRange,output_first_row) {
   }
   
 
-function date_for_GA_export(sheet,headers,output_first_row) {
+function date_for_GA_export(sheet,headers,output_first_row,date_style) {
   
   var lastRow = sheet.getLastRow()
-  
-  var date_output_style = 'EU' //  day,month, year
+
+     if(typeof date_style == "undefined"){
+         date_style = 'US' // month/day/year
+     }
   
   var num_headers = sheet.getLastColumn();
   
@@ -141,7 +144,7 @@ function date_for_GA_export(sheet,headers,output_first_row) {
            
              for (var j = 0; j<values.length; ++j){
              
-                 var to_insert = parse_date(values[j][0].toString(),date_output_style);
+                 var to_insert = parse_date(values[j][0].toString(),date_style);
              
                  sheet.getRange(16+j, 1).setValue(to_insert)
                                
