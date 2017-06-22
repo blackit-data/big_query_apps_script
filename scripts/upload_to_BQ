@@ -23,7 +23,7 @@ function upload_to_BQ(range,projectId,datasetId,tableId,writeDisposition,has_hea
   var schema_bq = [
         {name: 'state', type: 'STRING'},
         {name: 'metric', type: 'STRING'},
-        {name: 'population', type: 'INTEGER'}
+        {name: 'value', type: 'INTEGER'}
       ]
       OR:
   var schema_bq = 'automatic';
