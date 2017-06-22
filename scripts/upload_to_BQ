@@ -1,4 +1,4 @@
-function uploadBQ_sheet(range,projectId,datasetId,tableId,writeDisposition,has_header,schema_bq) {
+function upload_to_BQ(range,projectId,datasetId,tableId,writeDisposition,has_header,schema_bq) {
   
   /*
   This function uploads a range of values (vector/matrix) from Google Sheets 
