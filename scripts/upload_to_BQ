@@ -1,26 +1,44 @@
-
-
-function uploadBQ_sheet(range,projectId,datasetId,tableId,overwrite ) {
+function uploadBQ_sheet(range,projectId,datasetId,tableId,writeDisposition,has_header,schema_bq) {
   
+  /*
+  This function uploads a range of values (vector/matrix) from Google Sheets 
+  to BigQuery; 
+  It saves the selected range to Your Drive as a temporary CSV file, 
+  uploads it to BigQuery and deletes the temporary CSV file then.
   
+  If no schema is provided, it will be detected automatically.
+*/
   /* example values
-  var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('upload to BQ');
-  var projectId = 'somoto-installer';
-  var datasetId = 'analytics';
-  var tableId = 'bc_late';
+  var range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Example').getRange('A1:C10');
+  var projectId = 'your project id';
+  var datasetId = 'test_dataset';
+  var tableId = 'test_table';
   
-  var overwrite = 1
+  var writeDisposition = 'WRITE_EMPTY'
+    *** writeDisposition in (WRITE_TRUNCATE, WRITE_APPEND,WRITE_EMPTY)
+    *** default : WRITE_EMPTY
+    
+  var has_header = true;
+  
+  var schema_bq = [
+        {name: 'state', type: 'STRING'},
+        {name: 'metric', type: 'STRING'},
+        {name: 'population', type: 'INTEGER'}
+      ]
+      OR:
+  var schema_bq = 'automatic';
   */
 
-  if (overwrite == 1 || overwrite =='yes') {
-    
-  try{
-  BigQuery.Tables.remove(projectId, datasetId, tableId)
-  }catch( e){
-    
+   if(typeof writeDisposition == "undefined"){
+    writeDisposition = 'WRITE_EMPTY'
   }
+    
+  if(typeof has_header == "undefined"||has_header == true){
+    has_header = 1;
+  }else{
+    has_header = 0;
   }
-  
+ 
  
    var data = range.getValues();
    var csvFile = undefined;
@@ -58,20 +76,18 @@ function uploadBQ_sheet(range,projectId,datasetId,tableId,overwrite ) {
  while (files.hasNext()) {
    var file = files.next();
 
+
+  
    var table = {
     tableReference: {
       projectId: projectId,
       datasetId: datasetId,
       tableId: tableId
     },
-    schema: {
-      fields: [
-        {name: 'timestamp', type: 'TIMESTAMP'},
-        {name: 'installs', type: 'INTEGER'},
-        {name: 'downloads', type: 'INTEGER'}
-      ]
-    }
   };
+  
+
+  
 
    try {
      table = BigQuery.Tables.insert(table, projectId, datasetId)}
@@ -81,6 +97,8 @@ function uploadBQ_sheet(range,projectId,datasetId,tableId,overwrite ) {
   
    var data = file.getBlob().setContentType('application/octet-stream');
 
+   if(typeof schema_bq == "undefined"|| schema_bq == false || schema_bq == 'automatic'){
+   
   // Create the data upload job.
   var job = {
     configuration: {
@@ -90,10 +108,31 @@ function uploadBQ_sheet(range,projectId,datasetId,tableId,overwrite ) {
           datasetId: datasetId,
           tableId: tableId
         },
-        skipLeadingRows: 1
+        skipLeadingRows: has_header,
+        autodetect: true,
+        writeDisposition: writeDisposition
       }
     }
   };
+}else{
+  
+    // Create the data upload job.
+  var job = {
+    configuration: {
+      load: {
+        destinationTable: {
+          projectId: projectId,
+          datasetId: datasetId,
+          tableId: tableId
+        },
+        skipLeadingRows: has_header,
+        schema:schema_bq,
+        writeDisposition: writeDisposition
+      }
+    }
+  };
+  
+}
   job = BigQuery.Jobs.insert(job, projectId, data);
      
      file.setTrashed(true);
