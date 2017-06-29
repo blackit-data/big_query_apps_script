@@ -1,5 +1,13 @@
 function update_analytics() {
+
+/* Fixes needed: 
+        deal with last N days
+        fix date (done)
+        deal with only one report to run
+        sheet id
+        
   
+  */
   var pSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Report Configuration')
   
   var last_col = pSheet.getLastColumn()
@@ -139,14 +147,14 @@ function date_for_GA_export(sheet,headers,output_first_row,date_style) {
          
          if(trigger=='ga:date') {
          
-           var values = sheet.getRange(output_first_row+1, 1,lastRow-output_first_row).getValues()
+           var values = sheet.getRange(output_first_row+1, k+1,lastRow-output_first_row).getValues()
            
            
              for (var j = 0; j<values.length; ++j){
              
                  var to_insert = parse_date(values[j][0].toString(),date_style);
              
-                 sheet.getRange(16+j, 1).setValue(to_insert)
+                 sheet.getRange(16+j, k+1).setValue(to_insert)
                                
              } // for j 
          } // if header
@@ -157,30 +165,15 @@ function date_for_GA_export(sheet,headers,output_first_row,date_style) {
 
 }
 
-function parse_date(date, style) {
-  
-  // style: US means mm/dd/yyyy; 
-  //        otherwise dd/mm/yyyy
-  
-  /*  var y = date.substr(0,4),
-        m = date.substr(4,2) - 1,
-        d = date.substr(6,2);
-    var D = new Date(y,m,d);
-    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';*/
-  
-     if(typeof style == "undefined"){
-    style = 'EU'
-     } 
+function parse_date(date) {
+ 
+
   var year        = date.substring(0,4);
   var month       = date.substring(4,6);
   var day         = date.substring(6,8);
 
   var date_final        = new Date(year, month-1, day,0);
   
-  if (style == 'US'){ 
-        return month + "/" + day + "/" + year;
-  }else{
-      return day + "/" + month + "/" + year;
-  }
+  return year+'-'+month+'-'+day;
   
 } //parse_date
