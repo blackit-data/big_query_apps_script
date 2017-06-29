@@ -5,6 +5,7 @@ function update_analytics() {
         fix date (done)
         deal with only one report to run
         sheet id
+        add the last run and results count
         
   
   */
