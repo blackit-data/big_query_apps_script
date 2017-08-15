@@ -1,19 +1,15 @@
 function update_analytics() {
-
-/* Fixes needed: 
-        deal with last N days
-        fix date (done)
-        deal with only one report to run
-        sheet id
-        add the last run and results count
-        
   
-  */
+  
   var pSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Report Configuration')
   
   var last_col = pSheet.getLastColumn()
   
-  var reportRange = pSheet.getRange(2, 2, 15, last_col-1) // take all reports
+  if(last_col == 3 && pSheet.getRange('c2').getValue()==""){
+    var last_col = 2
+    }
+  
+  var reportRange = pSheet.getRange(2, 2, 16, last_col-1) // take all reports
   
   var output_first_row = 15
   
@@ -41,7 +37,8 @@ function analytics_export(reportRange,output_first_row) {
   
 // Merged cells in the output sheet will be unmerged (relevant for sheets created with Add-On)
 // If no output_first_row defined, output printed on the top of the sheet
-  
+     
+    
      if(typeof output_first_row == "undefined"){
     output_first_row = 1
      }
@@ -56,8 +53,19 @@ function analytics_export(reportRange,output_first_row) {
     var output_sheet = input[0][i]
     var tableId = input[2][i]
     
-    var startDate = Utilities.formatDate(input[3][i], 'IST', "YYYY-MM-dd") 
-    var endDate = Utilities.formatDate(input[4][i], 'IST', "YYYY-MM-dd") 
+    // If past N days available - take them; otherwise use start and end date -- as in Add-On
+    if(input[5][i] ==''){
+    
+    var startDate = Utilities.formatDate(input[3][i], SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "YYYY-MM-dd") 
+    var endDate = Utilities.formatDate(input[4][i], SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "YYYY-MM-dd") 
+    } else{
+      
+      var date = new Date();
+      var endDate = Utilities.formatDate(new Date(date.setDate(date.getDate() - 1)), SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "YYYY-MM-dd")      
+      var startDate = Utilities.formatDate(new Date(date.setDate(date.getDate() - input[5][i]+1)), SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "YYYY-MM-dd") 
+      }
+
+    
     
     var metric = input[6][i].replace(/(?:\r\n|\r|\n)/g, ',');
    
@@ -69,15 +77,17 @@ function analytics_export(reportRange,output_first_row) {
     var sampling_level =input[11][i]=='' ? 'HIGHER_PRECISION' : input[11][i];
     var start_index = input[12][i]=='' ? null : input[12][i];
     var max_results = input[13][i]=='' ? 1000 : input[13][i];
-    
-     var options = {
+    var spreadsheet_url = input[14][i]=='' ? 'none' : input[14][i];
+
+    var options = {
     'dimensions': dimensions,
     'sort': sort,
     'filters': filters,
        'segment':segment,   
     'sampling-level':sampling_level,
        'start-index':start_index,
-    'max-results': max_results
+    'max-results': max_results,
+//      'spreadsheet-url': spreadsheet_url
   };
     
      
@@ -86,14 +96,23 @@ function analytics_export(reportRange,output_first_row) {
 
   if (report.rows) {
 
-    try {
+     
+      if(spreadsheet_url=='none') {
+        try{
     var check_range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet).getRange('a1')
-    } 
-  catch(err) {
-    SpreadsheetApp.getActiveSpreadsheet().insertSheet(output_sheet)
+    } catch(err) {
+       SpreadsheetApp.getActiveSpreadsheet().insertSheet(output_sheet)
+    }  
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet)
+  }else{
+        try{
+    var check_range = SpreadsheetApp.openByUrl(spreadsheet_url).getSheetByName(output_sheet).getRange('a1')
+    }  catch(err) {
+        SpreadsheetApp.openByUrl(spreadsheet_url).insertSheet(output_sheet)
+    }
+  var sheet = SpreadsheetApp.openByUrl(spreadsheet_url).getSheetByName(output_sheet)
+   
   }
-    
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet)
     sheet.clearContents()
     sheet.clearFormats()
     
