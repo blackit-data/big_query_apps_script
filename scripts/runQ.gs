@@ -1,5 +1,9 @@
 function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
  
+ // Check out how to use the script on
+ // https://blackitdata.wordpress.com/2017/05/18/run-a-query-in-bigquery-from-gsheets/
+ // https://blackitdata.wordpress.com/2017/05/23/open-script-editor-and-connect-to-bigquery-api/
+ 
   var d0 = new Date();
  /* 
   // ++++++++++
