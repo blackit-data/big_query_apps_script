@@ -136,3 +136,15 @@ var jobId = queryResults.jobReference.jobId;
 
   }
 }
+
+// To make queries run also on Gsheet-tables:
+// Navigate in script editor to Resources -> Advanced Google Services and enable Drive API 
+function uploadFile() {
+  var image = UrlFetchApp.fetch('http://goo.gl/nd7zjB').getBlob();
+  var file = {
+    title: 'google_logo.png',
+    mimeType: 'image/png'
+  };
+  file = Drive.Files.insert(file, image);
+  Logger.log('ID: %s, File size (bytes): %s', file.id, file.fileSize);
+}
