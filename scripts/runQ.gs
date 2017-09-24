@@ -54,11 +54,10 @@ var jobId = queryResults.jobReference.jobId;
   // If no output sheet exists, create one
   try{
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
-    sheet.clear(); 
+    sheet.clearContents(); 
   }catch(e){
     SpreadsheetApp.getActiveSpreadsheet().insertSheet(output_sheet)
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
-    sheet.clear();     
   }
   
  if (rows) {
