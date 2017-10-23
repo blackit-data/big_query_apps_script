@@ -1,10 +1,11 @@
-function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
+function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url) {
  
  // Check out how to use the script on
  // https://blackitdata.wordpress.com/2017/05/18/run-a-query-in-bigquery-from-gsheets/
  // https://blackitdata.wordpress.com/2017/05/23/open-script-editor-and-connect-to-bigquery-api/
  
   var d0 = new Date();
+  
  /* 
   // ++++++++++
   // Test Values
@@ -13,9 +14,19 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql) {
   var output_sheet = 'data'
   var add_stats = 1  //-> by default will add onother hidden Sheet with stats of runs; add_stats=0 saves no stats
   var legacy_sql = 1 //--> will use legacy by default, if legacy_sql=0 uses standard SQL
+  var output_url = https://docs.google.com/spreadsheets/d/your_id/edit#gid=0
   // ++++++++++
   */
   
+  // Check if url for external output provided
+     if(typeof output_url == "undefined"){ 
+       var Spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+     }else{
+       var Spreadsheet = SpreadsheetApp.openByUrl(output_url);
+       }
+       
+       
+       
     // Check if legacy_sql parameter exists
      if(typeof legacy_sql == "undefined"){ 
        var legacy_sql = true
@@ -53,11 +64,11 @@ var jobId = queryResults.jobReference.jobId;
 
   // If no output sheet exists, create one
   try{
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
+    var sheet = Spreadsheet.getSheetByName(output_sheet);
     sheet.clearContents(); 
   }catch(e){
-    SpreadsheetApp.getActiveSpreadsheet().insertSheet(output_sheet)
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(output_sheet);
+    Spreadsheet.insertSheet(output_sheet)
+    var sheet = Spreadsheet.getSheetByName(output_sheet);    
   }
   
  if (rows) {
@@ -78,8 +89,8 @@ var jobId = queryResults.jobReference.jobId;
     }
     sheet.getRange(2, 1, rows.length, headers.length).setValues(data);
 
-    Logger.log('Results spreadsheet created: %s',
-        SpreadsheetApp.getActiveSpreadsheet().getUrl());
+  //  Logger.log('Results spreadsheet created: %s',
+  //      SpreadsheetApp.getActiveSpreadsheet().getUrl());
   } else {
     
     Browser.msgBox('No data found for your request. Maybe you specified to many parameters.');
@@ -136,8 +147,6 @@ var jobId = queryResults.jobReference.jobId;
   }
 }
 
-// To make queries run also on Gsheet-tables:
-// Navigate in script editor to Resources -> Advanced Google Services and enable Drive API 
 function uploadFile() {
   var image = UrlFetchApp.fetch('http://goo.gl/nd7zjB').getBlob();
   var file = {
