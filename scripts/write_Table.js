@@ -1,5 +1,7 @@
 function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats) {
   
+  // Check the explanations here: https://blackitdata.wordpress.com/2017/06/20/save-query-results-to-as-a-table-in-bigquery/
+  
   // writeDisposition in (WRITE_TRUNCATE, WRITE_APPEND,WRITE_EMPTY)
   // default : WRITE_EMPTY
   
