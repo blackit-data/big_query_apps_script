@@ -121,8 +121,14 @@ var jobId = queryResults.jobReference.jobId;
         
        hist_sheet.getRange('a1:e1').setValues(col_names)
           
+    // Format the history sheet: Fix the top row, format output numbers
           hist_sheet.getRange('g1').setValue('Total Cost');
           hist_sheet.getRange('h1').setValue('=sum(d:d)');
+          hist_sheet.setFrozenRows(1);
+        
+        hist_sheet.getRange('c:c').setNumberFormat("#,###");
+        hist_sheet.getRange('d:d').setNumberFormat("$#,##0.00");
+        hist_sheet.getRange('e:e').setNumberFormat("#,###"); 
           }
   
     var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
