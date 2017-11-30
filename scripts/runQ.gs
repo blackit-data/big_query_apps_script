@@ -4,6 +4,8 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url) {
  // https://blackitdata.wordpress.com/2017/05/18/run-a-query-in-bigquery-from-gsheets/
  // https://blackitdata.wordpress.com/2017/05/23/open-script-editor-and-connect-to-bigquery-api/
  
+ // Enable BigQuery API and Drive API in Google API Console
+ 
   var d0 = new Date();
   
  /* 
