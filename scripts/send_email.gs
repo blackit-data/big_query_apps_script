@@ -7,7 +7,7 @@ function send_email() {
   var Input_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('input');
   
   // number of email addresses
-  var numMails = Input_sheet.getRange('b1').getValue(); 
+  var numMails = Input_sheet.getRange('b2').getValue(); 
   
   // get the list of emails
   var Mail = Input_sheet.getRange(2,1,numMails).getValues()
