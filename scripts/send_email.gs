@@ -1,6 +1,10 @@
 function send_email() {
   
   // Sending a basic email.
+  
+  // Check the explanations here:
+  // https://blackitdata.wordpress.com/2017/12/03/sending-basic-emails-from-google-sheets/
+  
   // Check the spreadsheet setup here: 
   // https://docs.google.com/spreadsheets/d/1CiSwrS_h0oI2rgybDuh646fmxFUmMldvRecJwNt8oRY/edit?usp=sharing
   
