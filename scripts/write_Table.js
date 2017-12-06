@@ -114,3 +114,13 @@ var jobId = queryResults.jobReference.jobId;
   
   
 }
+
+function uploadFile() {
+  var image = UrlFetchApp.fetch('http://goo.gl/nd7zjB').getBlob();
+  var file = {
+    title: 'google_logo.png',
+    mimeType: 'image/png'
+  };
+  file = Drive.Files.insert(file, image);
+  Logger.log('ID: %s, File size (bytes): %s', file.id, file.fileSize);
+}
