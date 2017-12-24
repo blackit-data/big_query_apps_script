@@ -1,6 +1,7 @@
 function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats) {
   
-  // Check the explanations here: https://blackitdata.wordpress.com/2017/06/20/save-query-results-to-as-a-table-in-bigquery/
+  // Check the explanations here: 
+  // https://blackitdata.wordpress.com/2017/06/20/save-query-results-to-as-a-table-in-bigquery/
   // Enable BigQuery API and Drive API in Google API Console
   
   // writeDisposition in (WRITE_TRUNCATE, WRITE_APPEND,WRITE_EMPTY)
@@ -29,9 +30,7 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
     dryRun: true
   };
     
-  var queryResults0 = BigQuery.Jobs.query(request, projectId);
-  var bytes = queryResults0.totalBytesProcessed;
-  bytes=+bytes
+
   
   // Define the inserting job
   var job = {
@@ -53,8 +52,11 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
 // Execute inserting job  
 var queryResults = BigQuery.Jobs.insert(job, projectId);
 
-  
 // Collect data for the stats/history sheet  
+  var queryResults0 = BigQuery.Jobs.query(request, projectId);
+  var bytes = queryResults0.totalBytesProcessed;
+  bytes=+bytes
+  
 var jobId = queryResults.jobReference.jobId;
   
        if(typeof add_stats == "undefined"){ 
