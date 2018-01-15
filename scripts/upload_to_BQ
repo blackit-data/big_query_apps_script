@@ -1,7 +1,11 @@
 function upload_to_BQ(range,projectId,datasetId,tableId,writeDisposition,has_header,schema_bq) {
   
   /*
-  This function uploads a range of values (vector/matrix) from Google Sheets 
+  
+  Explanations for this code can be found in my blog:
+  https://blackitdata.wordpress.com/2017/06/22/upload-from-google-sheets-to-bigquery/
+  
+  Following function uploads a range of values (vector/matrix) from Google Sheets 
   to BigQuery; 
   It saves the selected range to Your Drive as a temporary CSV file, 
   uploads it to BigQuery and deletes the temporary CSV file then.
@@ -20,12 +24,14 @@ function upload_to_BQ(range,projectId,datasetId,tableId,writeDisposition,has_hea
     
   var has_header = true;
   
-  var schema_bq = [
+  var schema_bq = {
+      fields:[
         {name: 'state', type: 'STRING'},
         {name: 'metric', type: 'STRING'},
         {name: 'value', type: 'INTEGER'}
       ]
-      OR:
+      }
+   OR:
   var schema_bq = 'automatic';
   */
 
