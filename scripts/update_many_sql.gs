@@ -18,7 +18,7 @@ function update_many_sql() {
   for ( var i = 0; i <= num_cols-1; ++i ){
       for ( var j = 0; j <= num_rows-1; ++j ){
   
-        var sql = sql + queryRange[j][i]
+        var sql = sql + '\n' +queryRange[j][i] +'\n'
  
       }
   }
