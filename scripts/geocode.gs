@@ -1,5 +1,8 @@
 function geocode() {
   
+  // Check the explanations at www.blackitdata.wordpress.com
+  // And the suggested setup Sheet: https://docs.google.com/spreadsheets/d/17uyyM0mwKfqnV7J7j762irZUU2cOVnrkZw5hHjWGBN0/edit?usp=sharing
+  
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
   var n_rows = sheet.getLastRow();
   var inputs = sheet.getRange(1, 1, n_rows).getValues();
