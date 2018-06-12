@@ -1,6 +1,6 @@
 function geocode() {
   
-  // Check the explanations at www.blackitdata.wordpress.com
+  // Check the explanations at https://blackitdata.wordpress.com/2018/06/12/import-google-maps-results-into-sheets/
   // And the suggested setup Sheet: https://docs.google.com/spreadsheets/d/17uyyM0mwKfqnV7J7j762irZUU2cOVnrkZw5hHjWGBN0/edit?usp=sharing
   
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
