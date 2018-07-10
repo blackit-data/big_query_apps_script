@@ -1,5 +1,8 @@
 function copy_table(source_projectId,source_datasetId,source_tableId,dest_projectId,dest_datasetId,dest_tableId) {
  /*
+ Check the blog-post explaining this script:
+ https://blackitdata.wordpress.com/2018/07/09/copy-a-bigquery-table-using-apps-script/
+ 
  // Example inputs
   // SOURCE
   var source_projectId ='your_project' 
