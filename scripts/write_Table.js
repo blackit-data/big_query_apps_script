@@ -76,18 +76,18 @@ var jobId = queryResults.jobReference.jobId;
           var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
           hist_sheet.hideSheet()
           
-       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time']];
+       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time','User']];
         
-       hist_sheet.getRange('a1:e1').setValues(col_names)
+       hist_sheet.getRange('a1:f1').setValues(col_names)
   
     // Format the history sheet: Fix the top row, format output numbers
-          hist_sheet.getRange('g1').setValue('Total Cost');
-          hist_sheet.getRange('h1').setValue('=sum(d:d)');
+          hist_sheet.getRange('h1').setValue('Total Cost');
+          hist_sheet.getRange('i1').setValue('=sum(d:d)');
           hist_sheet.setFrozenRows(1);
         
-        hist_sheet.getRange('c:c').setNumberFormat("#,###");
+        hist_sheet.getRange('c:c').setNumberFormat("#,##0");
         hist_sheet.getRange('d:d').setNumberFormat("$#,##0.00");
-        hist_sheet.getRange('e:e').setNumberFormat("#,###");        
+        hist_sheet.getRange('e:e').setNumberFormat("#,##0");        
           }
   
    // Add stats to history sheet
@@ -100,17 +100,19 @@ var jobId = queryResults.jobReference.jobId;
   var processed_MB = bytes/(1024*1024);
   var cost = processed_MB/(200*1024)
   
-  hist_sheet.getRange(last_R+1, 1).setValue(now);
-  hist_sheet.getRange(last_R+1, 2).setValue(processed_MB);
-  hist_sheet.getRange(last_R+1, 3).setValue(cost);  
+//  hist_sheet.getRange(last_R+1, 1).setValue(now);
+//  hist_sheet.getRange(last_R+1, 2).setValue(processed_MB);
+//  hist_sheet.getRange(last_R+1, 3).setValue(cost);  
    
      
    var d1 = new Date()
    var how_long = ((d1.getTime()-d0.getTime())/1000)+1
    
-   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long]]
+   var user = Session.getActiveUser().getEmail()
    
-   hist_sheet.getRange(last_R+1, 1,1,5).setValues(values); 
+   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
+   
+   hist_sheet.getRange(last_R+1, 1,1,6).setValues(values); 
 
   }
   
