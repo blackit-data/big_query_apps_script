@@ -1,4 +1,4 @@
-function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url) {
+function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url,query_tag) {
  
  // Check out how to use the script on
  // https://blackitdata.wordpress.com/2017/05/18/run-a-query-in-bigquery-from-gsheets/
@@ -12,16 +12,27 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url) {
   // ++++++++++
   // Test Values
   var sql = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query').getRange('b2').getValue();
-  var projectId = 'your project'
+  var projectId = 'your_project'
   var output_sheet = 'data'
-  var add_stats = 1  //-> by default will add onother hidden Sheet with stats of runs; add_stats=0 saves no stats
+  var add_stats = 1  //--> by default will add onother hidden Sheet with stats of runs; add_stats=0 saves no stats
   var legacy_sql = 1 //--> will use legacy by default, if legacy_sql=0 uses standard SQL
   var output_url = https://docs.google.com/spreadsheets/d/your_id/edit#gid=0
+  var query_tag = 'example script' // --> basic/true/1/default - adds only "Note: Query run from Google Sheets"; 0/none/false adds nothing; else adds the string as comment in end of the query.
   // ++++++++++
   */
+
+  // Check if query_tag provided
+     if(typeof query_tag == "undefined" || query_tag == 'basic' || query_tag == 'default' || query_tag == 1 || query_tag == true){
+       var query_add_on = '\n \n/* Note: Query run from Google Sheets*/'
+       } else if (query_tag == 0 || query_tag == 'none' || query_tag == false){
+         var query_add_on = ''
+         }else{
+          var query_add_on = '\n \n/* Note: Query run from Google Sheets (' + query_tag + ')*/'
+         }
+
   
   // Check if url for external output provided
-     if(typeof output_url == "undefined"){ 
+     if(typeof output_url == "undefined" || output_url == 'none'|| output_url == 0 || output_url == false){ 
        var Spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
      }else{
        var Spreadsheet = SpreadsheetApp.openByUrl(output_url);
@@ -40,7 +51,7 @@ function runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url) {
 
   
   var request = {
-    query: sql,
+    query: sql+query_add_on,
     useLegacySql: legacy_sql
   };
 
