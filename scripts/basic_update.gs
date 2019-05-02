@@ -9,5 +9,5 @@ function update() {
     var output_url = 'docs.google.com/spreadsheets/d/Sheet_id/edit'
     var query_tag = 'example'
 
-  runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url )   
+  runQ(sql,projectId,output_sheet,add_stats,legacy_sql,output_url, query_tag)   
 }
