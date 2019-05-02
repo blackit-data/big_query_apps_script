@@ -35,7 +35,7 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
   
   // Check how much bytes the job will pass
   var request = {
-    query: sql+query_add_on,
+    query: sql,
     useLegacySql: legacy_sql,
     dryRun: true
   };
@@ -46,7 +46,7 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
   var job = {
     configuration: {
       query: {
-        query: sql,
+        query: sql+query_add_on,
         useLegacySql:legacy_sql,
         allowLargeResults:true,
         writeDisposition:writeDisposition,
