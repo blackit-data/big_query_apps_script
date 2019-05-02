@@ -1,4 +1,4 @@
-function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats) {
+function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats,query_tag) {
   
   // Check the explanations here: 
   // https://blackitdata.wordpress.com/2017/06/20/save-query-results-to-as-a-table-in-bigquery/
@@ -9,6 +9,16 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
   
   var d0 = new Date();
  
+
+  // Check if query_tag provided
+     if(typeof query_tag == "undefined" || query_tag == 'basic' || query_tag == 'default' || query_tag == 1 || query_tag == true){
+       var query_add_on = '\n \n/* Note: Query run from Google Sheets*/'
+       } else if (query_tag == 0 || query_tag == 'none' || query_tag == false){
+         var query_add_on = ''
+         }else{
+          var query_add_on = '\n \n/* Note: Query run from Google Sheets (' + query_tag + ')*/'
+         }
+  
   // Check Write Disposition
    if(typeof writeDisposition == "undefined"){
     writeDisposition = 'WRITE_EMPTY'
@@ -25,7 +35,7 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
   
   // Check how much bytes the job will pass
   var request = {
-    query: sql,
+    query: sql+query_add_on,
     useLegacySql: legacy_sql,
     dryRun: true
   };
