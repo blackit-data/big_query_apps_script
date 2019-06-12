@@ -160,9 +160,11 @@ var jobId = queryResults.jobReference.jobId;
    var how_long = ((d1.getTime()-d0.getTime())/1000)+0.5
    
    var user = Session.getActiveUser().getEmail()
-   
-   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
-   
+
+   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long]]
+   // OLD UI
+   // var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
+
    hist_sheet.getRange(last_R+1, 1,1,6).setValues(values); 
 
   }
