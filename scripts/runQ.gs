@@ -13,7 +13,7 @@ function update() {
     var add_stats = 1 // --> add_stats=1: adds onother hidden Sheet with stats of runs (**default)
                            //add_stats=0: saves no stats
     
-    var legacy_sql = 1 // --> legacy_sql=0: uses legacy SQL (**default)
+    var legacy_sql = 0 // --> legacy_sql=0: uses legacy SQL (**default)
                            // legacy_sql=0: uses standard SQL
     
     var output_url = 0 // if url is provided, the results will be saved in the provided Spreadsheet.
@@ -208,7 +208,7 @@ var jobId = queryResults.jobReference.jobId;
    
    var user = Session.getActiveUser().getEmail()
 
-   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user]]
+   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user]]
    // OLD UI
    // var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
 
