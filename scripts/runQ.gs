@@ -4,7 +4,7 @@ function update() {
   
     var sql =  Qsheet.getRange('a1').getValue()
     
-    var projectId = 'work-capital-data-analysis' // Google Cloud project
+    var projectId = 'your_project' // Google Cloud project
     
     var output_sheet = 'data' // name of the sheet where to save the results. 
                               // If no sheet with given name exists, it will be created
