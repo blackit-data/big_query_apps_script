@@ -175,9 +175,9 @@ var jobId = queryResults.jobReference.jobId;
           var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
           hist_sheet.hideSheet()
           
-       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time','User']];
+       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time','User','Query Tag']];
         
-       hist_sheet.getRange('a1:f1').setValues(col_names)
+       hist_sheet.getRange('a1:g1').setValues(col_names)
           
     // Format the history sheet: Fix the top row, format output numbers
           hist_sheet.getRange('h1').setValue('Total Cost');
@@ -208,11 +208,11 @@ var jobId = queryResults.jobReference.jobId;
    
    var user = Session.getActiveUser().getEmail()
 
-   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user]]
+   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user,query_tag]]
    // OLD UI
    // var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
 
-   hist_sheet.getRange(last_R+1, 1,1,6).setValues(values); 
+   hist_sheet.getRange(last_R+1, 1,1,7).setValues(values); 
 
   }
 }
@@ -225,4 +225,5 @@ function uploadFile() {
   };
   file = Drive.Files.insert(file, image);
   Logger.log('ID: %s, File size (bytes): %s', file.id, file.fileSize);
+  
 }
