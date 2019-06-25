@@ -1,3 +1,37 @@
+function update (){
+  
+    var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query');
+  
+    var sql =  Qsheet.getRange('a1').getValue()
+    
+    var projectId = 'your_project' // Google Cloud project
+    
+    var datasetId = 'dataset_name' // name of your dataset
+    
+    var tableId = 'table_name' // name of your table (will create new if does not exist)
+    
+    var writeDisposition = 'WRITE_EMPTY' // How the table should be saved
+                              // WRITE_EMPTY: If table with the specified name exists and has content, script does neither append nor overwrite
+                              // WRITE_TRUNCATE: Script replaces exisitng table with the results of the specified query
+                              // WRITE_APPEND: Script appends the results to an existend table or creates a new table if needed
+    
+    var add_stats = 1 // --> add_stats=1: adds onother hidden Sheet with stats of runs (**default)
+                           //add_stats=0: saves no stats
+    
+    var legacy_sql = 0 // --> legacy_sql=0: uses legacy SQL (**default)
+                           // legacy_sql=0: uses standard SQL
+    
+    var query_tag = 'example' // --> 1/true/basic - adds only "Note: Query run from Google Sheets" (**default)
+                              //     0/false/none - adds nothing; 
+                              //     else adds the string as comment in end of the query.
+
+  write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats,query_tag)
+  
+}
+
+
+
+
 function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats,query_tag) {
   
   // Check the explanations here: 
@@ -13,8 +47,10 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
   // Check if query_tag provided
      if(typeof query_tag == "undefined" || query_tag == 'basic' || query_tag == 'default' || query_tag == 1 || query_tag == true){
        var query_add_on = '\n \n/* Note: Query run from Google Sheets*/'
+       var query_tag = ''
        } else if (query_tag == 0 || query_tag == 'none' || query_tag == false){
          var query_add_on = ''
+         var query_tag = ''
          }else{
           var query_add_on = '\n \n/* Note: Query run from Google Sheets (' + query_tag + ')*/'
          }
@@ -86,13 +122,13 @@ var jobId = queryResults.jobReference.jobId;
           var hist_sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Query Run history');
           hist_sheet.hideSheet()
           
-       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time','User']];
+       var col_names = [['Date','Job ID','MB Processed','Cost in $','Running time','User','Query Tag']];
         
-       hist_sheet.getRange('a1:f1').setValues(col_names)
+       hist_sheet.getRange('a1:g1').setValues(col_names)
   
     // Format the history sheet: Fix the top row, format output numbers
-          hist_sheet.getRange('h1').setValue('Total Cost');
-          hist_sheet.getRange('i1').setValue('=sum(d:d)');
+          hist_sheet.getRange('J1').setValue('Total Cost');
+          hist_sheet.getRange('K1').setValue('=sum(d:d)');
           hist_sheet.setFrozenRows(1);
         
         hist_sheet.getRange('c:c').setNumberFormat("#,##0");
@@ -120,9 +156,13 @@ var jobId = queryResults.jobReference.jobId;
    
    var user = Session.getActiveUser().getEmail()
    
-   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user]]
+   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user,query_tag]]
+
+// OLD UI
+//   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user,query_tag]]
+  
    
-   hist_sheet.getRange(last_R+1, 1,1,6).setValues(values); 
+   hist_sheet.getRange(last_R+1, 1,1,7).setValues(values); 
 
   }
   
