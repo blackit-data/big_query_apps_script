@@ -151,7 +151,7 @@ var jobId = queryResults.jobReference.jobId;
   //      SpreadsheetApp.getActiveSpreadsheet().getUrl());
   } else {
     
-    if(if_empty_response = 'notify'){
+    if(if_empty_response == 'notify'){
         Browser.msgBox('The query returned with an empty table.');
     }
   }
