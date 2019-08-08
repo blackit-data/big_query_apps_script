@@ -1,16 +1,16 @@
-function update (){
+function upd (){
   
     var Qsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('query');
   
     var sql =  Qsheet.getRange('a1').getValue()
     
-    var projectId = 'your_project' // Google Cloud project
+    var project_id = 'your_project' // Google Cloud project of the destination table
     
-    var datasetId = 'dataset_name' // name of your dataset
+    var dataset_id = 'dataset_name' // Name of destination dataset
     
-    var tableId = 'table_name' // name of your table (will create new if does not exist)
+    var table_id = 'table_name' // Name of destination table (will create new if does not exist)
     
-    var writeDisposition = 'WRITE_EMPTY' // How the table should be saved
+    var write_disposition = 'WRITE_EMPTY' // How the table should be saved
                               // WRITE_EMPTY: If table with the specified name exists and has content, script does neither append nor overwrite
                               // WRITE_TRUNCATE: Script replaces exisitng table with the results of the specified query
                               // WRITE_APPEND: Script appends the results to an existend table or creates a new table if needed
@@ -21,24 +21,27 @@ function update (){
     var legacy_sql = 0 // --> legacy_sql=0: uses legacy SQL (**default)
                            // legacy_sql=0: uses standard SQL
     
-    var query_tag = 'example' // --> 1/true/basic - adds only "Note: Query run from Google Sheets" (**default)
-                              //     0/false/none - adds nothing; 
+    var query_tag = 'example' // --> 1/true/'basic' - adds only "Note: Query run from Google Sheets" (**default)
+                              //     0/false/'none' - adds nothing; 
                               //     else adds the string as comment in end of the query.
+    
+    var project_id_billing = 0 // --> 0/false/'none' - bills the destination project (**default)
+                               //     'your_billing_project' - type the name of the project to be billed
 
-  write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats,query_tag)
+  write_Table(sql,project_id,dataset_id,table_id,write_disposition,legacy_sql,add_stats,query_tag,project_id_billing)
   
 }
 
 
 
 
-function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql,add_stats,query_tag) {
+function write_Table(sql,project_id,dataset_id,table_id,write_disposition,legacy_sql,add_stats,query_tag,project_id_billing) {
   
   // Check the explanations here: 
   // https://blackitdata.wordpress.com/2017/06/20/save-query-results-to-as-a-table-in-bigquery/
   // Enable BigQuery API and Drive API in Google API Console
   
-  // writeDisposition in (WRITE_TRUNCATE, WRITE_APPEND,WRITE_EMPTY)
+  // write_disposition in (WRITE_TRUNCATE, WRITE_APPEND,WRITE_EMPTY)
   // default : WRITE_EMPTY
   
   var d0 = new Date();
@@ -56,8 +59,8 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
          }
   
   // Check Write Disposition
-   if(typeof writeDisposition == "undefined"){
-    writeDisposition = 'WRITE_EMPTY'
+   if(typeof write_disposition == "undefined"){
+    write_disposition = 'WRITE_EMPTY'
   }
   
   // Check SQL-dialect
@@ -67,6 +70,15 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
             var legacy_sql = false
             } else {
               var legacy_sql = true
+              }
+
+  // Check Billing Project Id
+   if(typeof project_id_billing == "undefined"){ 
+       var project_id_billing = project_id
+         } else if(project_id_billing==0 || project_id_billing == false){ 
+            var project_id_billing = project_id
+            } else {
+              var project_id_billing = project_id_billing
               }
   
   // Check how much bytes the job will pass
@@ -85,21 +97,21 @@ function write_Table(sql,projectId,datasetId,tableId,writeDisposition,legacy_sql
         query: sql+query_add_on,
         useLegacySql:legacy_sql,
         allowLargeResults:true,
-        writeDisposition:writeDisposition,
+        write_disposition:write_disposition,
         destinationTable: {
-          projectId: projectId,
-          datasetId: datasetId,
-          tableId: tableId
+          project_id: project_id,
+          dataset_id: dataset_id,
+          table_id: table_id
         }
       }
     }
   };
 
 // Execute inserting job  
-var queryResults = BigQuery.Jobs.insert(job, projectId);
+var queryResults = BigQuery.Jobs.insert(job, project_id_billing);
 
 // Collect data for the stats/history sheet  
-  var queryResults0 = BigQuery.Jobs.query(request, projectId);
+  var queryResults0 = BigQuery.Jobs.query(request, project_id_billing);
   var bytes = queryResults0.totalBytesProcessed;
   bytes=+bytes
   
@@ -156,10 +168,10 @@ var jobId = queryResults.jobReference.jobId;
    
    var user = Session.getActiveUser().getEmail()
    
-   var values = [[now,'https://console.cloud.google.com/bigquery?project='+projectId+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user,query_tag]]
+   var values = [[now,'https://console.cloud.google.com/bigquery?project='+project_id_billing+'&j=:bq:US:'+jobId+'&page=queryresults',processed_MB,cost,how_long,user,query_tag]]
 
 // OLD UI
-//   var values = [[now,'https://bigquery.cloud.google.com/results/'+projectId+':'+jobId+'?pli=1',processed_MB,cost,how_long, user,query_tag]]
+//   var values = [[now,'https://bigquery.cloud.google.com/results/'+project_id+':'+jobId+'?pli=1',processed_MB,cost,how_long, user,query_tag]]
   
    
    hist_sheet.getRange(last_R+1, 1,1,7).setValues(values); 
