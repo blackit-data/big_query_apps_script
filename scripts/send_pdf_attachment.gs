@@ -1,5 +1,9 @@
 function send_pdf() {
   
+  
+  // Checkout the blog: wwww.blackitdata.wordpress.com
+  // Post about this code: https://lnkd.in/grnbrgx
+  
   var email = 'blackit.data@gmail.com'  // Email address to send to; multiple addresses have to be separated by a comma
   
   var subject  = 'Test PDF Sending'     // Subject of the email 
